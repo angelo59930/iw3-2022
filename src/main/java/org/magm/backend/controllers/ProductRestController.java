@@ -1,8 +1,10 @@
 package org.magm.backend.controllers;
 
+import org.magm.backend.model.Category;
 import org.magm.backend.model.Product;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
+import org.magm.backend.model.business.ICategoryBusiness;
 import org.magm.backend.model.business.IProductBusiness;
 import org.magm.backend.model.business.NotFoundException;
 import org.magm.backend.util.IStandartResponseBusiness;
@@ -106,7 +108,75 @@ public class ProductRestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	//CATEGORY
+	
+	@Autowired
+	private ICategoryBusiness categoryBusiness;
 
-
+	@GetMapping(value="/category", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> listCategory() {
+		try {
+			return new ResponseEntity<>(categoryBusiness.list(), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping(value="/category/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> loadCategory(@PathVariable("id") long id) {
+		try {
+			return new ResponseEntity<>(categoryBusiness.load(id), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	
+	@PostMapping(value="")
+	public ResponseEntity<?> addCategory(@RequestBody Category category) {
+		try {
+			Category response=categoryBusiness.add(category);
+			HttpHeaders responseHeaders=new HttpHeaders();
+			responseHeaders.set("location",Constants.URL_PRODUCTS+"/categories/"+response.getId());
+			return new ResponseEntity<>( responseHeaders,HttpStatus.CREATED);
+		} catch (FoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	
+	@PutMapping(value = "")
+	public ResponseEntity<?> updateCategory(@RequestBody Category category) {
+		try {
+			categoryBusiness.update(category);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<?> deleteCategory(@PathVariable("id") long id) {
+		try {
+			categoryBusiness.delete(id);
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+	}
 	
 }
