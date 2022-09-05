@@ -136,7 +136,7 @@ public class ProductRestController extends BaseRestController {
 	}
 	
 	
-	@PostMapping(value="")
+	@PostMapping(value="/categories")
 	public ResponseEntity<?> addCategory(@RequestBody Category category) {
 		try {
 			Category response=categoryBusiness.add(category);
@@ -153,7 +153,7 @@ public class ProductRestController extends BaseRestController {
 	}
 	
 	
-	@PutMapping(value = "")
+	@PutMapping(value = "/categories")
 	public ResponseEntity<?> updateCategory(@RequestBody Category category) {
 		try {
 			categoryBusiness.update(category);
@@ -166,7 +166,7 @@ public class ProductRestController extends BaseRestController {
 		}
 	}
 	
-	@DeleteMapping(value = "/{id}")
+	@DeleteMapping(value = "/categories/{id}")
 	public ResponseEntity<?> deleteCategory(@PathVariable("id") long id) {
 		try {
 			categoryBusiness.delete(id);
