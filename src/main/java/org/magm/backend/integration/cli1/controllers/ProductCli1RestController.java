@@ -6,7 +6,6 @@ import org.magm.backend.integration.cli1.model.ProductCli1;
 import org.magm.backend.integration.cli1.model.business.IProductCli1Business;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
-import org.magm.backend.model.business.IProductBusiness;
 import org.magm.backend.model.business.NotFoundException;
 import org.magm.backend.util.IStandartResponseBusiness;
 import org.springframework.beans.factory.annotation.Autowired;
