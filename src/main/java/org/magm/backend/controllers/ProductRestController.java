@@ -114,7 +114,7 @@ public class ProductRestController extends BaseRestController {
 	@Autowired
 	private ICategoryBusiness categoryBusiness;
 
-	@GetMapping(value="/category", produces=MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/categories", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> listCategory() {
 		try {
 			return new ResponseEntity<>(categoryBusiness.list(), HttpStatus.OK);
@@ -123,7 +123,7 @@ public class ProductRestController extends BaseRestController {
 		}
 	}
 	
-	@GetMapping(value="/category/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/categories/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> loadCategory(@PathVariable("id") long id) {
 		try {
 			return new ResponseEntity<>(categoryBusiness.load(id), HttpStatus.OK);
