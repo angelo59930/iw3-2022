@@ -13,7 +13,7 @@ public interface IBillCli2Business {
 
   public BillCli2 deleteBill(long id) throws NotFoundException, BusinessException;
 
-  public BillCli2 getBill(long id);
+  public BillCli2 getBill(long id) throws NotFoundException, BusinessException;
 
   public List<BillCli2> getBillListNotAnnulled();
 }
