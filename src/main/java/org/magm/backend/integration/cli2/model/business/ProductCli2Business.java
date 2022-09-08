@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.magm.backend.integration.cli2.model.ProductCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2SlimView;
-import org.magm.backend.integration.cli2.model.persistence.ProductCli2Respository;
+import org.magm.backend.integration.cli2.model.persistence.IProductCli2Respository;
 import org.magm.backend.model.business.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductCli2Business implements IProductCli2Business {
 
 	@Autowired(required = false)
-	private ProductCli2Respository productDAO;
+	private IProductCli2Respository productDAO;
 
 	@Override
 	public List<ProductCli2> listExpired(Date date) throws BusinessException {

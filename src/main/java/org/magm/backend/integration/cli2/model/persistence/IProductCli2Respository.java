@@ -8,10 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductCli2Respository extends JpaRepository<ProductCli2, Long> {
+public interface IProductCli2Respository extends JpaRepository<ProductCli2, Long> {
 	public List<ProductCli2> findByExpirationDateBeforeOrderByExpirationDateDesc(Date expirationDate);
 
 	public List<ProductCli2SlimView> findByOrderByPriceDesc();
-
 
 }
