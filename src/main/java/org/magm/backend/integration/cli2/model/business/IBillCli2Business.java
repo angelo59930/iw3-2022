@@ -9,7 +9,7 @@ import org.magm.backend.model.business.NotFoundException;
 public interface IBillCli2Business {
   public BillCli2 generateBill();
 
-  public BillCli2 modifyBill(BillCli2 bill);
+  public BillCli2 modifyBill(BillCli2 bill) throws NotFoundException, BusinessException;
 
   public BillCli2 deleteBill(long id) throws NotFoundException, BusinessException;
 
