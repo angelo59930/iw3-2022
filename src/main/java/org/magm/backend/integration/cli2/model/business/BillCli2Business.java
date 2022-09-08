@@ -34,15 +34,12 @@ public class BillCli2Business implements IBillCli2Business {
 
 	}
 
-	@Autowired(required = false)
-	private IBillCli2Business billCli2Business;
-
 	@Override
 	public BillCli2 modifyBill(BillCli2 bill) throws NotFoundException, BusinessException {
 
 		try {
-			billCli2Business.deleteBill(bill.getId());
-			billCli2Business.generateBill(bill);
+			billDAO.deleteById(bill.getId());
+			billDAO.save(bill);
 			throw FoundException.builder().message("Se encontro la Factura id=" + bill.getId()).build();
 		} catch (FoundException e) {
 			throw NotFoundException.builder().message("La factura no existe").build();
