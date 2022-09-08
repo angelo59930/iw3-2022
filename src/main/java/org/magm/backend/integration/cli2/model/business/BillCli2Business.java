@@ -18,9 +18,19 @@ public class BillCli2Business implements IBillCli2Business {
 	private IBillCli2Repository billDAO;
 
 	@Override
-	public BillCli2 generateBill() {
-		// TODO Auto-generated method stub
-		return null;
+	public BillCli2 generateBill(BillCli2 bill) throws FoundException, BusinessException{
+
+		if(billDAO.findById(bill.getId()).isPresent()) {
+			throw FoundException.builder().message("Se encontró el Bill id=" + bill.getId()).build();	
+		}
+		
+		try {
+			return billDAO.save(bill);
+		}catch(Exception e) {
+			log.error(e.getMessage(), e);
+			throw BusinessException.builder().ex(e).build();
+		}
+		
 	}
 
 	@Override
@@ -58,8 +68,17 @@ public class BillCli2Business implements IBillCli2Business {
 
 	@Override
 	public List<BillCli2> getBillListNotAnnulled() {
-		// TODO Auto-generated method stub
-		return null;
+				
+		List <BillCli2> lista = billDAO.findAll();
+		
+		for(BillCli2 b : lista) {
+			
+			if(b.isAnnulled()) {
+				lista.remove(b);
+			}	
+		}
+		
+		return lista;
 	}
 
 }
