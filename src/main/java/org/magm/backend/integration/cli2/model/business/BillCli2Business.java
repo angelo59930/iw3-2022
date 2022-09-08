@@ -1,6 +1,8 @@
 package org.magm.backend.integration.cli2.model.business;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.magm.backend.integration.cli2.model.BillCli2;
 import org.magm.backend.integration.cli2.model.persistence.IBillCli2Repository;
 import org.magm.backend.model.business.BusinessException;
@@ -11,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class BillCli2Business implements IBillCli2Business{
+public class BillCli2Business implements IBillCli2Business {
 
 	private IBillCli2Repository billDAO;
 
@@ -28,21 +30,30 @@ public class BillCli2Business implements IBillCli2Business{
 	}
 
 	@Override
-	public BillCli2 deleteBill(long id) throws NotFoundException, BusinessException{
+	public BillCli2 deleteBill(long id) throws NotFoundException, BusinessException {
 		BillCli2 bill = getBill(id);
-		try{
+		try {
 			billDAO.deleteById(id);
-		} catch(Exception e){
-			log.error(e.getMessage(),e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 			throw BusinessException.builder().ex(e).build();
 		}
 		return bill;
 	}
 
 	@Override
-	public BillCli2 getBill(long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public BillCli2 getBill(long id) throws NotFoundException, BusinessException {
+		Optional<BillCli2> r;
+		try {
+			r = billDAO.findById(id);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw BusinessException.builder().ex(e).build();
+		}
+		if(r.isEmpty())
+			throw NotFoundException.builder().message("no se encuentra la factura con id '" + id + "'").build();
+
+		return r.get();
 	}
 
 	@Override
