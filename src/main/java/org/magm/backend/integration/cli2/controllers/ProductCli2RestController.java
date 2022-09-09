@@ -77,19 +77,6 @@ public class ProductCli2RestController extends BaseRestController {
 	}
 
 	// BILLS
-/*
-	@GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getBillById(@PathVariable("id") long id) {
-		try {
-			return new ResponseEntity<>(billBusiness.getBill(id), HttpStatus.OK);
-		} catch (BusinessException e) {
-			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (NotFoundException e) {
-			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
-		}
-	} */
-
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> list() {
 		try {
@@ -99,45 +86,24 @@ public class ProductCli2RestController extends BaseRestController {
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-/*
-	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> listNotAnnulled() throws BusinessException {
-		return new ResponseEntity<>(billBusiness.getBillListNotAnnulled(), HttpStatus.OK);
-	}
 
-	@PostMapping(value = "/bills")
-	public ResponseEntity<?> addBill(@RequestBody BillCli2 bill) {
+	@GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> load(@PathVariable("id") long id){
 		try {
-			BillCli2 response = billBusiness.generateBill(bill);
-			HttpHeaders responseHeaders = new HttpHeaders();
-			responseHeaders.set("location", Constants.URL_INTEGRATION_CLI1 + "/bills/" + response.getId());
-			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+			return new ResponseEntity<>(billBusiness.load(id), HttpStatus.OK);
 		} catch (BusinessException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (FoundException e) {
-			return new ResponseEntity<>(response.build(HttpStatus.FOUND, e, e.getMessage()), HttpStatus.FOUND);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
-	}
-	
+	}	
+
 	@PutMapping(value = "/bills")
-	public ResponseEntity<?> updateBill(@RequestBody BillCli2 bill) {
+	public ResponseEntity<?> update(@RequestBody BillCli2 bill) {
 		try {
-			billBusiness.modifyBill(bill);
+			billBusiness.update(bill);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (BusinessException e) {
-			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (NotFoundException e) {
-			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
-		}
-	}
-	
-	@DeleteMapping(value = "/bills/{id}")
-	public ResponseEntity<?> deleteById(@PathVariable("id") long id) {
-		try {
-			billBusiness.deleteBill(id);
-			return new ResponseEntity<String>(HttpStatus.OK);
 		} catch (BusinessException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -146,17 +112,4 @@ public class ProductCli2RestController extends BaseRestController {
 		}
 	}
 
-	
-	@PutMapping(value = "/bills/annulled/{id}")
-	public ResponseEntity<?> annullBill(@RequestBody long id) {
-		try {
-			billBusiness.annulledById(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (BusinessException e) {
-			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (NotFoundException e) {
-			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
-		}
-	}*/
 }
