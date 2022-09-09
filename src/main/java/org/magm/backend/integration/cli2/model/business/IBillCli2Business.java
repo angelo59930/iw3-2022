@@ -17,9 +17,9 @@ public interface IBillCli2Business {
 
   public BillCli2 update(BillCli2 bill) throws NotFoundException, BusinessException; // Actualizar una Bill ✓
 
-  public List<BillCli2> listNoAnulled() throws BusinessException; // Listado de todas las Bills no anuladas ✓
+  public List<BillCli2> listNoAnulled() throws BusinessException; // Listado de todas las Bills no anuladas
 
-  public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException; // Anular una Bill 
+  public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException; // Anular una Bill
 
 
 }
