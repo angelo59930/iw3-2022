@@ -8,34 +8,17 @@ import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
 
 public interface IBillCli2Business {
-  /*
-   * public BillCli2 generateBill(BillCli2 bill) throws FoundException,
-   * BusinessException;//
-   * 
-   * public BillCli2 modifyBill(BillCli2 bill) throws NotFoundException,
-   * BusinessException;//
-   * 
-   * public BillCli2 deleteBill(long id) throws NotFoundException,
-   * BusinessException;//
-   * 
-   * public BillCli2 getBill(long id) throws NotFoundException,
-   * BusinessException;//
-   * 
-   * public List<BillCli2> getBillListNotAnnulled();//
-   * 
-   * public void annulledById(long id) throws NotFoundException,
-   * BusinessException;
-   */
-  public BillCli2 load(long id) throws NotFoundException, BusinessException; // Pedir una Bill
 
-  public List<BillCli2> list() throws BusinessException; // Listado de todas las Bills
+  public BillCli2 load(long id) throws NotFoundException, BusinessException; // Pedir una Bill ✓
 
-  public BillCli2 add(BillCli2 bill) throws FoundException, BusinessException; // Dar de alta una Bill
+  public List<BillCli2> list() throws BusinessException; // Listado de todas las Bills ✓
 
-  public BillCli2 update(BillCli2 bill) throws NotFoundException, BusinessException; // Actualizar una Bill
+  public BillCli2 add(BillCli2 bill) throws FoundException, BusinessException; // Dar de alta una Bill ✓
 
-  public List<BillCli2> listNoAnulled() throws BusinessException; // Listado de todas las Bills no anuladas
+  public BillCli2 update(BillCli2 bill) throws NotFoundException, BusinessException; // Actualizar una Bill ✓
 
-  public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException; // Anular una Bill
+  public List<BillCli2> listNoAnulled() throws BusinessException; // Listado de todas las Bills no anuladas ✓
+
+  public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException; // Anular una Bill 
 
 }
