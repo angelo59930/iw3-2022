@@ -99,6 +99,21 @@ public class ProductCli2RestController extends BaseRestController {
 		}
 	}	
 
+	@PostMapping(value = "/bills")
+	public ResponseEntity<?> add(@RequestBody BillCli2 bill) {
+		try {
+			BillCli2 response = billBusiness.add(bill);
+			HttpHeaders responseHeaders = new HttpHeaders();
+			responseHeaders.set("location", Constants.URL_PRODUCTS + "/" + response.getId());
+			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+		} catch (FoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	@PutMapping(value = "/bills")
 	public ResponseEntity<?> update(@RequestBody BillCli2 bill) {
 		try {
