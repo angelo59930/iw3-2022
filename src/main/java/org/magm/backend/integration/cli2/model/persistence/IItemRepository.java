@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IItemRepository extends JpaRepository<ItemCli2, Long> {
-  public List<ItemCli2> list() throws BusinessException;
+  //public List<ItemCli2> loadItem() throws BusinessException;
 
-  public ItemCli2 add(ItemCli2 item) throws FoundException, BusinessException;
+  //public ItemCli2 add(ItemCli2 item) throws FoundException, BusinessException;
 
-  public ItemCli2 getOne(Long id);
+  //public ItemCli2 getOneById(Long id);
 
 }
