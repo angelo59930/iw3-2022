@@ -88,7 +88,7 @@ public class ProductCli2RestController extends BaseRestController {
 	}
 
 	@GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> load(@PathVariable("id") long id){
+	public ResponseEntity<?> load(@PathVariable("id") long id) {
 		try {
 			return new ResponseEntity<>(billBusiness.load(id), HttpStatus.OK);
 		} catch (BusinessException e) {
@@ -97,7 +97,17 @@ public class ProductCli2RestController extends BaseRestController {
 		} catch (NotFoundException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
-	}	
+	}
+
+	@GetMapping(value = "/bills/noAnulled", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> listNoAnulled() {
+		try {
+			return new ResponseEntity<>(billBusiness.listNoAnulled(), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@PostMapping(value = "/bills")
 	public ResponseEntity<?> add(@RequestBody BillCli2 bill) {
