@@ -21,4 +21,5 @@ public interface IBillCli2Business {
 
   public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException; // Anular una Bill 
 
+
 }
