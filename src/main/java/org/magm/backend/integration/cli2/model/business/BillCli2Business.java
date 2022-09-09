@@ -8,7 +8,6 @@ import org.magm.backend.integration.cli2.model.persistence.IBillCli2Repository;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,29 +19,32 @@ public class BillCli2Business implements IBillCli2Business {
 	private IBillCli2Repository billDAO;
 
 	@Override
-	public BillCli2 generateBill(BillCli2 bill) throws FoundException, BusinessException {
-
+	public BillCli2 generateBill(BillCli2 bill) throws FoundException, BusinessException { //Dar de alta una factura completa con sus items
+		
 		if (billDAO.findById(bill.getId()).isPresent()) {
 			throw FoundException.builder().message("Se encontró el Bill id=" + bill.getId()).build();
 		}
 		try {
-			return billDAO.save(bill);
+			
+			if(bill.isAnnulled()) {
+				return billDAO.save(bill);
+			}
+			
+			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw BusinessException.builder().ex(e).build();
 		}
+		return bill;
 
 	}
 
-	@Autowired(required = false)
-	private IBillCli2Business billCli2Business;
-
 	@Override
-	public BillCli2 modifyBill(BillCli2 bill) throws NotFoundException, BusinessException {
+	public BillCli2 modifyBill(BillCli2 bill) throws NotFoundException, BusinessException { //Modificar cualquier parte de la factura
 
 		try {
-			billCli2Business.deleteBill(bill.getId());
-			billCli2Business.generateBill(bill);
+			billDAO.deleteById(bill.getId());
+			billDAO.save(bill);
 			throw FoundException.builder().message("Se encontro la Factura id=" + bill.getId()).build();
 		} catch (FoundException e) {
 			throw NotFoundException.builder().message("La factura no existe").build();
@@ -62,7 +64,7 @@ public class BillCli2Business implements IBillCli2Business {
 	}
 
 	@Override
-	public BillCli2 getBill(long id) throws NotFoundException, BusinessException {
+	public BillCli2 getBill(long id) throws NotFoundException, BusinessException { //Obtener una factura
 		Optional<BillCli2> r;
 		try {
 			r = billDAO.findById(id);
@@ -77,7 +79,7 @@ public class BillCli2Business implements IBillCli2Business {
 	}
 
 	@Override
-	public List<BillCli2> getBillListNotAnnulled() {
+	public List<BillCli2> getBillListNotAnnulled() { //Listar todas las facturas no anuladas
 
 		List<BillCli2> lista = billDAO.findAll();
 
@@ -90,5 +92,21 @@ public class BillCli2Business implements IBillCli2Business {
 
 		return lista;
 	}
+	
+	@Override
+	public BillCli2 annulledById(long id) throws BusinessException {
+		
+		try {
+			
+			billDAO.setAnnullation(true, id);
+			
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw BusinessException.builder().ex(e).build();
+		}
+		
+		return billDAO.getById(id);
+	}
+	
 
 }

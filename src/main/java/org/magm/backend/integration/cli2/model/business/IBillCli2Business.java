@@ -17,4 +17,6 @@ public interface IBillCli2Business {
   public BillCli2 getBill(long id) throws NotFoundException, BusinessException;
 
   public List<BillCli2> getBillListNotAnnulled();
+  
+  public BillCli2 annulledById(long id) throws NotFoundException, BusinessException;
 }

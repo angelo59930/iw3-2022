@@ -1,5 +1,6 @@
 package org.magm.backend.config.profile;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ excludeFilters = {
 		"org.magm.backend.auth", 
 		"org.magm.backend.integration.cli2.model" 
 })
-
+@ConditionalOnExpression(value = "'${spring.profiles.active:-}'=='cli2'")
 @Profile("cli2")
 public class Cli2ScanConfig {
 
