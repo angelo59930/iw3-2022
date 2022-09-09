@@ -8,6 +8,7 @@ import org.magm.backend.integration.cli2.model.persistence.IBillCli2Repository;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BillCli2Business implements IBillCli2Business {
 
+	@Autowired
 	private IBillCli2Repository billDAO;
 
+	@Override
+	public List<BillCli2> list() throws BusinessException {
+		try {
+			return billDAO.findAll();
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw BusinessException.builder().ex(e).build();
+		}
+	}
+
+
+	
+
+/*
 	@Override
 	public BillCli2 generateBill(BillCli2 bill) throws FoundException, BusinessException { //Dar de alta una factura completa con sus items
 		
@@ -94,7 +110,7 @@ public class BillCli2Business implements IBillCli2Business {
 	}
 	
 	@Override
-	public BillCli2 annulledById(long id) throws BusinessException {
+	public void annulledById(long id) throws BusinessException {
 		
 		try {
 			
@@ -105,8 +121,6 @@ public class BillCli2Business implements IBillCli2Business {
 			throw BusinessException.builder().ex(e).build();
 		}
 		
-		return billDAO.getById(id);
 	}
-	
-
+	*/
 }

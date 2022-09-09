@@ -5,13 +5,11 @@ import java.util.Date;
 
 import org.magm.backend.controllers.BaseRestController;
 import org.magm.backend.controllers.Constants;
-import org.magm.backend.integration.cli1.model.ProductCli1;
 import org.magm.backend.integration.cli2.model.BillCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2SlimV1JsonSerializer;
 import org.magm.backend.integration.cli2.model.business.IBillCli2Business;
 import org.magm.backend.integration.cli2.model.business.IProductCli2Business;
-import org.magm.backend.model.Product;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
@@ -79,7 +77,7 @@ public class ProductCli2RestController extends BaseRestController {
 	}
 
 	// BILLS
-
+/*
 	@GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> getBillById(@PathVariable("id") long id) {
 		try {
@@ -90,14 +88,18 @@ public class ProductCli2RestController extends BaseRestController {
 		} catch (NotFoundException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
-	}
+	} */
 
-///TODO arreglar todo esto 
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> listd() throws BusinessException {
-		return new ResponseEntity<>(billBusiness.getBill(), HttpStatus.OK);
+	public ResponseEntity<?> list() {
+		try {
+			return new ResponseEntity<>(billBusiness.list(), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
-	
+/*
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> listNotAnnulled() throws BusinessException {
 		return new ResponseEntity<>(billBusiness.getBillListNotAnnulled(), HttpStatus.OK);
@@ -156,5 +158,5 @@ public class ProductCli2RestController extends BaseRestController {
 		} catch (NotFoundException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
-	}
+	}*/
 }

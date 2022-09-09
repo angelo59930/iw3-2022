@@ -20,7 +20,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name="items")
-@PrimaryKeyJoinColumn(name = "id_item")
 @Getter
 @Setter
 @NoArgsConstructor

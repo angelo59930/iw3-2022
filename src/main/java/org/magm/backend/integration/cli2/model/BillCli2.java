@@ -20,7 +20,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name="bills")
-@PrimaryKeyJoinColumn(name = "id_bill")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,7 +45,7 @@ public class BillCli2 implements Serializable{
 	private boolean annulled;
 	
 	@OneToMany()
-	@JoinColumn(name = "id_item", nullable = false)
+	@JoinColumn(name = "id_bill", nullable = false)
 	private Set<ItemCli2> items;
 
 }

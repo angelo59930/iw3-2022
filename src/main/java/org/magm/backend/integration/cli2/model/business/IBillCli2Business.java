@@ -8,6 +8,7 @@ import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
 
 public interface IBillCli2Business {
+  /*
   public BillCli2 generateBill(BillCli2 bill) throws FoundException, BusinessException;//
 
   public BillCli2 modifyBill(BillCli2 bill) throws NotFoundException, BusinessException;//
@@ -17,6 +18,9 @@ public interface IBillCli2Business {
   public BillCli2 getBill(long id) throws NotFoundException, BusinessException;//
 
   public List<BillCli2> getBillListNotAnnulled();//
-  
-  public BillCli2 annulledById(long id) throws NotFoundException, BusinessException;
+
+  public void annulledById(long id) throws NotFoundException, BusinessException;*/
+
+  public List<BillCli2> list() throws BusinessException;
+
 }
