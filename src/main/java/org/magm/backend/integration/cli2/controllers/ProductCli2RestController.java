@@ -33,8 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.google.gson.Gson;
-
 @Profile({ "cli2", "mysqldev" })
 @RestController
 @RequestMapping(Constants.URL_INTEGRATION_CLI2 + "/products")
@@ -48,7 +46,6 @@ public class ProductCli2RestController extends BaseRestController {
 
 	@Autowired
 	private IBillCli2Business billBusiness;
-
 	// PRODUCTS
 
 	@GetMapping(value = "/list-expired", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -110,15 +107,9 @@ public class ProductCli2RestController extends BaseRestController {
 	}
 
 	@PostMapping(value = "/bills")
-	public ResponseEntity<?> add(@RequestBody String bill) {
-
-		Gson parser = new Gson();
-		BillCli2 tmp = parser.fromJson(bill, BillCli2.class);
-		
-		
-		
+	public ResponseEntity<?> add(@RequestBody BillCli2 bill) {
 		try {
-			BillCli2 response = billBusiness.add(tmp);
+			BillCli2 response = billBusiness.add(bill);
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.set("location", Constants.URL_PRODUCTS + "/" + response.getId());
 			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
@@ -155,6 +146,5 @@ public class ProductCli2RestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
-
 
 }

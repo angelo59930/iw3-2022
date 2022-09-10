@@ -1,16 +1,13 @@
 package org.magm.backend.integration.cli2.model.business;
 
 import java.util.Optional;
-import java.util.Set;
 
-import org.magm.backend.integration.cli2.model.BillCli2;
 import org.magm.backend.integration.cli2.model.ItemCli2;
 import org.magm.backend.integration.cli2.model.persistence.IItemRepository;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -63,17 +60,5 @@ public class ItemCli2Business implements IItemCli2Business {
     }
   }
 
-  @Override
-  public void addList(Set<ItemCli2> itemsSet) throws FoundException, BusinessException {
-    // TODO Auto-generated method stub
-    try {
-      for (ItemCli2 item : itemsSet) {
-        load(item.getId());
-        itemDAO.save(item);
-      }
-    }catch (Exception e) {
-      log.error(e.getMessage(), e);
-    }
-  }
 
 }
