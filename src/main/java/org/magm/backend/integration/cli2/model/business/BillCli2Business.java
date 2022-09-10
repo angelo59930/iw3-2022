@@ -8,6 +8,7 @@ import org.magm.backend.integration.cli2.model.persistence.IBillCli2Repository;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,13 +75,20 @@ public class BillCli2Business implements IBillCli2Business {
 	@Override
 	public List<BillCli2> listNoAnulled() throws BusinessException {
 		List<BillCli2> listNoAnulled = list();
-
-		for (BillCli2 bill : listNoAnulled) {
-			if (bill.isAnnulled())
-				listNoAnulled.remove(bill);
-		}
+		try{
+			for (BillCli2 bill : listNoAnulled) {
+				if (bill.isAnnulled())
+					listNoAnulled.remove(bill);
+			}
+		}catch(Exception e){}
 
 		return listNoAnulled;
 	}
 
+	@Override
+	public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException {
+		BillCli2 bill = load(id);
+		bill.setAnnulled(true);
+		return billDAO.save(bill);
+	}
 }

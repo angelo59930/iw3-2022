@@ -22,7 +22,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.google.gson.Gson;
 
 @Profile({ "cli2", "mysqldev" })
 @RestController
@@ -110,9 +110,15 @@ public class ProductCli2RestController extends BaseRestController {
 	}
 
 	@PostMapping(value = "/bills")
-	public ResponseEntity<?> add(@RequestBody BillCli2 bill) {
+	public ResponseEntity<?> add(@RequestBody String bill) {
+
+		Gson parser = new Gson();
+		BillCli2 tmp = parser.fromJson(bill, BillCli2.class);
+		
+		
+		
 		try {
-			BillCli2 response = billBusiness.add(bill);
+			BillCli2 response = billBusiness.add(tmp);
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.set("location", Constants.URL_PRODUCTS + "/" + response.getId());
 			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
@@ -136,5 +142,19 @@ public class ProductCli2RestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
+
+	@PutMapping(value = "/bills/anulled/{id}")
+	public ResponseEntity<?> update(@PathVariable("id") long id) {
+		try {
+			billBusiness.anulledBill(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+	}
+
 
 }
