@@ -3,7 +3,7 @@ package org.magm.backend.integration.cli2.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.Table;blob/21 a3f03affbbecf9e6294d12518fc40846f38ec2/src/main/java/org/magm/backend/integration/cli2/model/BillCli2.jav
 
 import org.magm.backend.model.Bill;
 
