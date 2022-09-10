@@ -37,7 +37,7 @@ public class ItemCli2 implements Serializable{
 	private double price;
 	
 	@ManyToOne //items ---> 1 producto
-	@JoinColumn(name = "id_product", nullable = false)
+	@JoinColumn(name = "id_product", nullable = true)
 	private ProductCli2 product;
 
 }

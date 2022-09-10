@@ -44,7 +44,7 @@ public class BillCli2 implements Serializable{
 	private boolean annulled;
 	
 	@OneToMany()
-	@JoinColumn(name = "id_bill", nullable = false)
+	@JoinColumn(name = "id_bill", nullable = true)
 	private Set<ItemCli2> items;
 
 }
