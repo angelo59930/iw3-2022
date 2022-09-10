@@ -9,7 +9,7 @@ public interface IItemCli2Business {
 
   public ItemCli2 add(ItemCli2 item) throws FoundException, BusinessException;
 
-  public ItemCli2 load(long id) throws FoundException, BusinessException, NotFoundException;
+  public ItemCli2 load(long id) throws BusinessException, NotFoundException;
 
   public ItemCli2 update(ItemCli2 item) throws NotFoundException, BusinessException;
 

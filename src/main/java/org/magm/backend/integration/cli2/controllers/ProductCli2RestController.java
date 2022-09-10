@@ -6,9 +6,11 @@ import java.util.Date;
 import org.magm.backend.controllers.BaseRestController;
 import org.magm.backend.controllers.Constants;
 import org.magm.backend.integration.cli2.model.BillCli2;
+import org.magm.backend.integration.cli2.model.ItemCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2SlimV1JsonSerializer;
 import org.magm.backend.integration.cli2.model.business.IBillCli2Business;
+import org.magm.backend.integration.cli2.model.business.IItemCli2Business;
 import org.magm.backend.integration.cli2.model.business.IProductCli2Business;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
@@ -46,6 +48,10 @@ public class ProductCli2RestController extends BaseRestController {
 
 	@Autowired
 	private IBillCli2Business billBusiness;
+	
+	@Autowired
+	private IItemCli2Business itemBusiness;
+	
 	// PRODUCTS
 
 	@GetMapping(value = "/list-expired", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -146,5 +152,50 @@ public class ProductCli2RestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	
+	//ITEMS
+	
+	@PostMapping(value = "/items")
+	public ResponseEntity<?> addItems(@RequestBody ItemCli2 item) {
+		try {
+			ItemCli2 response = itemBusiness.add(item);
+			HttpHeaders responseHeaders = new HttpHeaders();
+			responseHeaders.set("location", Constants.URL_PRODUCTS + "/" + response.getId());
+			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+		} catch (FoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping(value = "/items/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> loadItem(@PathVariable("id") long id) {
+		try {
+			return new ResponseEntity<>(itemBusiness.load(id), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@PutMapping(value = "/items")
+	public ResponseEntity<?> updateItems(@RequestBody ItemCli2 item) {
+		try {
+			itemBusiness.update(item);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	
 
 }
