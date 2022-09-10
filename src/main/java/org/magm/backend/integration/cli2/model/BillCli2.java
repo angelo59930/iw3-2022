@@ -1,16 +1,15 @@
-package org.magm.backend.model;
-
+package org.magm.backend.integration.cli2.model;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -18,31 +17,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
-@Table(name="products")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name="bills")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product implements Serializable{
+public class BillCli2 implements Serializable{
+	
+	private static final long serialVersionUID = -7660002054606583573L;
 
-	private static final long serialVersionUID = 1583413618748026543L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(length = 100, unique = true)
-	private String product;
+	@Column(unique = true)
+	private long number;
+	
+	@Column(nullable = false)
+	private Date issueDate;
+	
+	@Column(nullable = false)
+	private Date expirationDate;
 	
 	@Column(columnDefinition = "tinyint default 0")
-	private boolean stock = true;
-
-	private double price;
+	private boolean annulled;
 	
-	@ManyToOne
-	@JoinColumn(name="id_category", nullable = true)
-	private Category category;
+	@OneToMany()
+	@JoinColumn(name = "id_bill", nullable = true)
+	private Set<ItemCli2> items;
 
 }
