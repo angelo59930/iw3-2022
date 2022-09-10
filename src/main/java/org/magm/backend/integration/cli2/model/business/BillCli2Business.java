@@ -50,9 +50,10 @@ public class BillCli2Business implements IBillCli2Business {
 	public BillCli2 add(BillCli2 bill) throws FoundException, BusinessException {
 		try {
 			load(bill.getId());
-			throw FoundException.builder().message("Se encuentró el Producto id=" + bill.getId()).build();
+			throw FoundException.builder().message("Se encontró la factura id=" + bill.getId()).build();
 		} catch (NotFoundException e) {
 		}
+
 		try {
 			return billDAO.save(bill);
 		} catch (Exception e) {

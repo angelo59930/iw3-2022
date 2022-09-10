@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IBillCli2Repository extends JpaRepository<BillCli2, Long>{
 	
-	public Optional<BillCli2> findById(BillCli2 bill);
+	public Optional<BillCli2> findByNumber(BillCli2 bill);
 
 	@Modifying
 	@Query(value = "UPDATE bills SET annulled=? WHERE id=?", nativeQuery = true)
