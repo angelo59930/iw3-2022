@@ -21,5 +21,4 @@ public interface IBillCli2Business {
 
   public BillCli2 anulledBill(long id) throws NotFoundException,BusinessException;
 
- // public BillCli2 addExternal (String json)throws FoundException, BusinessException;
 }
