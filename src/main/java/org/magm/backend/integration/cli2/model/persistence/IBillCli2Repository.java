@@ -1,5 +1,6 @@
 package org.magm.backend.integration.cli2.model.persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.magm.backend.integration.cli2.model.BillCli2;
