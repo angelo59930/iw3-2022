@@ -12,14 +12,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IBillCli2Repository extends JpaRepository<BillCli2, Long>{
-	
-	public Optional<BillCli2> findByNumber(BillCli2 bill);
-	
 
 	@Modifying
 	@Query(value = "UPDATE bills SET annulled=? WHERE id=?", nativeQuery = true)
 	public boolean setAnnullation(boolean state, long idBill);
 	
-	//public List<BillCli2SlimView> findByOrderByPriceDesc();
-
+	@Modifying
+	@Query(value = "SELECT b.id FROM bills as b \n"
+			+ "	INNER JOIN items as i ON i.id_bill = b.id\n"
+			+ "    INNER JOIN products as p ON p.id = i.id_product\n"
+			+ "    WHERE p.id = ?", nativeQuery = true)
+	public List<Long> getByBillByProduct(long id);
+	
+	public BillCli2SlimView getById(long id);
 }

@@ -3,6 +3,7 @@ package org.magm.backend.integration.cli2.model.business;
 import java.util.List;
 
 import org.magm.backend.integration.cli2.model.BillCli2;
+import org.magm.backend.integration.cli2.model.BillCli2SlimView;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
@@ -21,4 +22,7 @@ public interface IBillCli2Business {
 
   public BillCli2 anulledBill(long id) throws NotFoundException,BusinessException;
 
+  public List<Long> loadBillByProduct(long id);
+  
+  public BillCli2SlimView loadSlimView(long id);
 }

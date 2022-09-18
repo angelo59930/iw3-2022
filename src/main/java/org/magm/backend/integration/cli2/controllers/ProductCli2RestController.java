@@ -6,7 +6,6 @@ import java.util.Date;
 import org.magm.backend.controllers.BaseRestController;
 import org.magm.backend.controllers.Constants;
 import org.magm.backend.integration.cli2.model.BillCli2;
-import org.magm.backend.integration.cli2.model.BillCli2SlimV2JsonSerializer;
 import org.magm.backend.integration.cli2.model.BillCli2SlimV1JsonSerializer;
 import org.magm.backend.integration.cli2.model.BillCli2SlimV2JsonSerializer;
 import org.magm.backend.integration.cli2.model.ItemCli2;
@@ -84,9 +83,17 @@ public class ProductCli2RestController extends BaseRestController {
 
 	// BILLS
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> list() {
+	public ResponseEntity<?> list(@RequestParam(name = "productid", required = false, defaultValue = "0") long id) {
 		try {
-			return new ResponseEntity<>(billBusiness.list(), HttpStatus.OK);
+			
+			if((long) id != 0) {
+				
+				return new ResponseEntity<>(billBusiness.loadBillByProduct(id), HttpStatus.OK);
+				
+			}else {
+				return new ResponseEntity<>(billBusiness.list(), HttpStatus.OK);
+			}
+			
 		} catch (BusinessException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -110,7 +117,7 @@ public class ProductCli2RestController extends BaseRestController {
 	            }
 
 	            String result = JsonUtiles.getObjectMapper(BillCli2.class, ser, null)
-	                    .writeValueAsString(billBusiness.load(id));
+	                    .writeValueAsString(billBusiness.loadSlimView(id));
 
 	            return new ResponseEntity<>(result, HttpStatus.OK);
 

@@ -6,11 +6,14 @@ import org.magm.backend.model.Item;
 import org.magm.backend.model.Product;
 
 public interface BillCli2SlimView {
-  long getNumber();
+  
+	long getId();
+	
+	long getNumber();
 
   Date getIssueDate();
 
-  Date getExpitDate();
+  Date getExpirationDate();
 
   boolean getAnnulled();
 
