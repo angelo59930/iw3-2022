@@ -6,6 +6,9 @@ import java.util.Date;
 import org.magm.backend.controllers.BaseRestController;
 import org.magm.backend.controllers.Constants;
 import org.magm.backend.integration.cli2.model.BillCli2;
+import org.magm.backend.integration.cli2.model.BillCli2SlimV2JsonSerializer;
+import org.magm.backend.integration.cli2.model.BillCli2SlimV1JsonSerializer;
+import org.magm.backend.integration.cli2.model.BillCli2SlimV2JsonSerializer;
 import org.magm.backend.integration.cli2.model.ItemCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2SlimV1JsonSerializer;
@@ -90,6 +93,37 @@ public class ProductCli2RestController extends BaseRestController {
 		}
 	}
 
+	
+	 @GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	    public ResponseEntity<?> load(@PathVariable("id") long id,
+	            @RequestParam(name = "slim", required = false, defaultValue = "v0") String slimVersion) {
+	        try {
+
+	            StdSerializer<BillCli2> ser = null;
+
+	            if (slimVersion.equalsIgnoreCase("v1")) {
+	                ser = new BillCli2SlimV1JsonSerializer(BillCli2.class, false);
+	            } else if (slimVersion.equalsIgnoreCase("v2")) {
+	                ser = new BillCli2SlimV2JsonSerializer(BillCli2.class, false);
+	            } else {
+	                return new ResponseEntity<>(billBusiness.load(id), HttpStatus.OK);
+	            }
+
+	            String result = JsonUtiles.getObjectMapper(BillCli2.class, ser, null)
+	                    .writeValueAsString(billBusiness.load(id));
+
+	            return new ResponseEntity<>(result, HttpStatus.OK);
+
+	        } catch (BusinessException | JsonProcessingException e) {
+	            return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
+	                    HttpStatus.INTERNAL_SERVER_ERROR);
+	        } catch (NotFoundException e) {
+	            return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
+	        }
+	    }
+	
+	
+	/*
 	@GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> load(@PathVariable("id") long id) {
 		try {
@@ -101,7 +135,7 @@ public class ProductCli2RestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
-
+*/
 	@GetMapping(value = "/bills/noAnulled", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> listNoAnulled() {
 		try {

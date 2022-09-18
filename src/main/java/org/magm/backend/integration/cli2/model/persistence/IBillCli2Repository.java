@@ -20,6 +20,6 @@ public interface IBillCli2Repository extends JpaRepository<BillCli2, Long>{
 	@Query(value = "UPDATE bills SET annulled=? WHERE id=?", nativeQuery = true)
 	public boolean setAnnullation(boolean state, long idBill);
 	
-	public List<BillCli2SlimView> findByOrderByPriceDesc();
+	//public List<BillCli2SlimView> findByOrderByPriceDesc();
 
 }
