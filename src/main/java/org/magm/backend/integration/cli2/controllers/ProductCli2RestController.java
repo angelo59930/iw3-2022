@@ -6,6 +6,8 @@ import java.util.Date;
 import org.magm.backend.controllers.BaseRestController;
 import org.magm.backend.controllers.Constants;
 import org.magm.backend.integration.cli2.model.BillCli2;
+import org.magm.backend.integration.cli2.model.BillCli2SlimV1JsonSerializer;
+import org.magm.backend.integration.cli2.model.BillCli2SlimV2JsonSerializer;
 import org.magm.backend.integration.cli2.model.ItemCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2;
 import org.magm.backend.integration.cli2.model.ProductCli2SlimV1JsonSerializer;
@@ -35,9 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
 @Profile({ "cli2", "mysqldev" })
 @RestController
-@RequestMapping(Constants.URL_INTEGRATION_CLI2 + "/products")
+@RequestMapping(Constants.URL_INTEGRATION_CLI2)
 public class ProductCli2RestController extends BaseRestController {
 
 	@Autowired
@@ -48,10 +51,10 @@ public class ProductCli2RestController extends BaseRestController {
 
 	@Autowired
 	private IBillCli2Business billBusiness;
-	
+
 	@Autowired
 	private IItemCli2Business itemBusiness;
-	
+
 	// PRODUCTS
 
 	@GetMapping(value = "/list-expired", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -81,9 +84,14 @@ public class ProductCli2RestController extends BaseRestController {
 
 	// BILLS
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> list() {
+	public ResponseEntity<?> list(@RequestParam(name = "productid", required = false, defaultValue = "0") long id) {
 		try {
-			return new ResponseEntity<>(billBusiness.list(), HttpStatus.OK);
+			if ((long) id != 0) {
+				return new ResponseEntity<>(billBusiness.loadBillByProduct(id), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(billBusiness.list(), HttpStatus.OK);
+			}
+
 		} catch (BusinessException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -91,10 +99,28 @@ public class ProductCli2RestController extends BaseRestController {
 	}
 
 	@GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> load(@PathVariable("id") long id) {
+	public ResponseEntity<?> load(@PathVariable("id") long id,
+			@RequestParam(name = "slim", required = false, defaultValue = "v0") String slimVersion) {
 		try {
-			return new ResponseEntity<>(billBusiness.load(id), HttpStatus.OK);
-		} catch (BusinessException e) {
+			String result;
+			StdSerializer<BillCli2> ser = null;
+
+			if (slimVersion.equalsIgnoreCase("v1")) {
+				ser = new BillCli2SlimV1JsonSerializer(BillCli2.class, false);
+				result = JsonUtiles.getObjectMapper(BillCli2.class, ser, null)
+						.writeValueAsString(billBusiness.load(id));
+			} else if (slimVersion.equalsIgnoreCase("v2")) {
+				ser = new BillCli2SlimV2JsonSerializer(BillCli2.class, false);
+				result = JsonUtiles.getObjectMapper(BillCli2.class, ser, null)
+						.writeValueAsString(billBusiness.loadSlimView(id));
+
+			} else {
+				return new ResponseEntity<>(billBusiness.load(id), HttpStatus.OK);
+			}
+
+			return new ResponseEntity<>(result, HttpStatus.OK);
+
+		} catch (BusinessException | JsonProcessingException e) {
 			return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (NotFoundException e) {
@@ -102,6 +128,22 @@ public class ProductCli2RestController extends BaseRestController {
 		}
 	}
 
+	/*
+	 * @GetMapping(value = "/bills/{id}", produces =
+	 * MediaType.APPLICATION_JSON_VALUE)
+	 * public ResponseEntity<?> load(@PathVariable("id") long id) {
+	 * try {
+	 * return new ResponseEntity<>(billBusiness.load(id), HttpStatus.OK);
+	 * } catch (BusinessException e) {
+	 * return new ResponseEntity<>(response.build(HttpStatus.INTERNAL_SERVER_ERROR,
+	 * e, e.getMessage()),
+	 * HttpStatus.INTERNAL_SERVER_ERROR);
+	 * } catch (NotFoundException e) {
+	 * return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e,
+	 * e.getMessage()), HttpStatus.NOT_FOUND);
+	 * }
+	 * }
+	 */
 	@GetMapping(value = "/bills/noAnulled", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> listNoAnulled() {
 		try {
@@ -152,10 +194,9 @@ public class ProductCli2RestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	
-	//ITEMS
-	
+
+	// ITEMS
+
 	@PostMapping(value = "/items")
 	public ResponseEntity<?> addItems(@RequestBody ItemCli2 item) {
 		try {
@@ -170,7 +211,7 @@ public class ProductCli2RestController extends BaseRestController {
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@GetMapping(value = "/items/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> loadItem(@PathVariable("id") long id) {
 		try {
@@ -182,7 +223,7 @@ public class ProductCli2RestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
-	
+
 	@PutMapping(value = "/items")
 	public ResponseEntity<?> updateItems(@RequestBody ItemCli2 item) {
 		try {
@@ -195,7 +236,5 @@ public class ProductCli2RestController extends BaseRestController {
 			return new ResponseEntity<>(response.build(HttpStatus.NOT_FOUND, e, e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	
 
 }

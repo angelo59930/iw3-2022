@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.magm.backend.integration.cli2.model.BillCli2;
+import org.magm.backend.integration.cli2.model.BillCli2SlimView;
 import org.magm.backend.integration.cli2.model.persistence.IBillCli2Repository;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
@@ -91,5 +92,16 @@ public class BillCli2Business implements IBillCli2Business {
 		BillCli2 bill = load(id);
 		bill.setAnnulled(true);
 		return billDAO.save(bill);
+	}
+
+	@Override
+	public List<Long> loadBillByProduct(long id) {
+		
+		return billDAO.getByBillByProduct(id);
+	}
+
+	@Override
+	public BillCli2SlimView loadSlimView(long id) {
+		return billDAO.readById(id);
 	}
 }
