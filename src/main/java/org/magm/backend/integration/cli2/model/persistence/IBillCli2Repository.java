@@ -25,4 +25,7 @@ public interface IBillCli2Repository extends JpaRepository<BillCli2, Long>{
 	public List<Long> getByBillByProduct(long id);
 	
 	public BillCli2SlimView getById(long id);
+
+	public BillCli2SlimView readById(long id);
+
 }

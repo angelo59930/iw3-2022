@@ -102,6 +102,6 @@ public class BillCli2Business implements IBillCli2Business {
 
 	@Override
 	public BillCli2SlimView loadSlimView(long id) {
-		return billDAO.getById(id);
+		return billDAO.readById(id);
 	}
 }
