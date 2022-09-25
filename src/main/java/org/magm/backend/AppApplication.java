@@ -1,5 +1,6 @@
 package org.magm.backend;
 
+import org.magm.backend.auth.filters.AuthConstants;
 import org.magm.backend.model.persistence.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
+import ch.qos.logback.core.encoder.Encoder;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
