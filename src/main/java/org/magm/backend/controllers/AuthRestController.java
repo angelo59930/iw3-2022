@@ -27,11 +27,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 public class AuthRestController extends BaseRestController {
 
@@ -39,14 +36,12 @@ public class AuthRestController extends BaseRestController {
     private AuthenticationManager authManager;
 
     @Autowired
-    private UserBusiness userBusiness;
 
     @PostMapping(value = Constants.URL_LOGIN, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<?> loginExternalOnlyToken(@RequestParam(value = "username") String username,
             @RequestParam(value = "password") String password,
             @RequestParam(value = "json") Boolean json) throws NotFoundException, BusinessException {
 
-        Gson serializer = new Gson();
         Authentication auth = null;
         try {
             auth = authManager.authenticate(((CustomAuthenticationManager) authManager).AuthWrap(username, password));
