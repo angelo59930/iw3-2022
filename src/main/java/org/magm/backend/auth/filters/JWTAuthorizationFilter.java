@@ -64,38 +64,41 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 ? request.getHeader(AuthConstants.AUTH_HEADER_NAME).replace(AuthConstants.TOKEN_PREFIX, "")
                 : request.getParameter(AuthConstants.AUTH_PARAM_NAME);
 
-        if (token != null) {
-            // Parseamos el token usando la librería
-            DecodedJWT jwt = JWT.require(Algorithm.HMAC512(AuthConstants.SECRET.getBytes())).build().verify(token);
+        try {
+            if (token != null) {
+                // Parseamos el token usando la librería
+                DecodedJWT jwt = JWT.require(Algorithm.HMAC512(AuthConstants.SECRET.getBytes())).build().verify(token);
 
-            log.trace("Token recibido por '{}'", byHeader ? "header" : "query param");
-            log.trace("Usuario logueado: " + jwt.getSubject());
-            log.trace("Roles: " + jwt.getClaim("roles"));
-            log.trace("Custom JWT Version: " + jwt.getClaim("version").asString());
+                log.trace("Token recibido por '{}'", byHeader ? "header" : "query param");
+                log.trace("Usuario logueado: " + jwt.getSubject());
+                log.trace("Roles: " + jwt.getClaim("roles"));
+                log.trace("Custom JWT Version: " + jwt.getClaim("version").asString());
 
-            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-            Set<Role> roles = new HashSet<Role>();
-            try {
-                @SuppressWarnings("unchecked")
-                List<String> rolesStr = (List<String>) jwt.getClaim("roles").as(List.class);
+                List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+                Set<Role> roles = new HashSet<Role>();
+                try {
+                    @SuppressWarnings("unchecked")
+                    List<String> rolesStr = (List<String>) jwt.getClaim("roles").as(List.class);
 
-                authorities = rolesStr.stream().map(role -> new SimpleGrantedAuthority(role))
-                        .collect(Collectors.toList());
-                roles = rolesStr.stream().map(role -> new Role(role, 0, role)).collect(Collectors.toSet());
-            } catch (Exception e) {
+                    authorities = rolesStr.stream().map(role -> new SimpleGrantedAuthority(role))
+                            .collect(Collectors.toList());
+                    roles = rolesStr.stream().map(role -> new Role(role, 0, role)).collect(Collectors.toSet());
+                } catch (Exception e) {
+                }
+
+                String username = jwt.getSubject();
+
+                if (username != null) {
+                    User user = new User();
+                    user.setIdUser(jwt.getClaim("internalId").asLong());
+                    user.setUsername(username);
+                    user.setRoles(roles);
+                    user.setEmail(jwt.getClaim("email").asString());
+                    return new UsernamePasswordAuthenticationToken(user, null, authorities);
+                }
+                return null;
             }
-
-            String username = jwt.getSubject();
-
-            if (username != null) {
-                User user = new User();
-                user.setIdUser(jwt.getClaim("internalId").asLong());
-                user.setUsername(username);
-                user.setRoles(roles);
-                user.setEmail(jwt.getClaim("email").asString());
-                return new UsernamePasswordAuthenticationToken(user, null, authorities);
-            }
-            return null;
+        } catch (Exception e) {
         }
         return null;
     }

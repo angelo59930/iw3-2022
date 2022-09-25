@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.magm.backend.auth.User;
+import org.magm.backend.auth.UserBusiness;
+import org.magm.backend.auth.UserSlimJsonSerializer;
 import org.magm.backend.auth.custom.CustomAuthenticationManager;
 import org.magm.backend.auth.filters.AuthConstants;
+import org.magm.backend.model.business.BusinessException;
+import org.magm.backend.model.business.NotFoundException;
+import org.magm.backend.util.JsonUtiles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,16 +25,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.google.gson.Gson;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 public class AuthRestController extends BaseRestController {
 
     @Autowired
     private AuthenticationManager authManager;
 
+    @Autowired
+    private UserBusiness userBusiness;
+
     @PostMapping(value = Constants.URL_LOGIN, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<?> loginExternalOnlyToken(@RequestParam(value = "username") String username,
-                                                    @RequestParam(value = "password") String password) {
+            @RequestParam(value = "password") String password,
+            @RequestParam(value = "json") Boolean json) throws NotFoundException, BusinessException {
+
+        Gson serializer = new Gson();
         Authentication auth = null;
         try {
             auth = authManager.authenticate(((CustomAuthenticationManager) authManager).AuthWrap(username, password));
@@ -48,6 +65,23 @@ public class AuthRestController extends BaseRestController {
                 .withExpiresAt(new Date(System.currentTimeMillis() + AuthConstants.EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(AuthConstants.SECRET.getBytes()));
 
-        return new ResponseEntity<String>(token, HttpStatus.OK);
+        if (json) {
+            user.setToken(token);
+            StdSerializer<User> ser = null;
+            String result;
+            try {
+                ser = new UserSlimJsonSerializer(User.class,false);
+                result = JsonUtiles.getObjectMapper(User.class, ser, null)
+                        .writeValueAsString(user);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return new ResponseEntity<>("Error al momento de crear el json del user", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<String>(token, HttpStatus.OK);
+        }
     }
 }

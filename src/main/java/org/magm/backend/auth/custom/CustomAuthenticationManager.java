@@ -32,8 +32,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
-        String password = authentication.getCredentials().toString();
+        String password;
+        String username;
+
+        password = authentication.getCredentials().toString();
+        username = authentication.getName();
 
         User user = null;
         try {
@@ -60,31 +63,38 @@ public class CustomAuthenticationManager implements AuthenticationManager {
         return new UsernamePasswordAuthenticationToken(user, null);
 
     }
+
     public Authentication AuthWrap(String name, String pass) {
         return new Authentication() {
             @Override
             public String getName() {
                 return name;
             }
+
             @Override
             public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
             }
+
             @Override
             public boolean isAuthenticated() {
                 return false;
             }
+
             @Override
             public Object getPrincipal() {
                 return null;
             }
+
             @Override
             public Object getDetails() {
                 return null;
             }
+
             @Override
             public Object getCredentials() {
                 return pass;
             }
+
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
                 return null;

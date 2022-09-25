@@ -82,6 +82,9 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
     @Transient
+    private String token;
+
+    @Transient
     public boolean isInRole(Role role) {
         return isInRole(role.getName());
     }
