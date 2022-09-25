@@ -30,8 +30,7 @@ public class AppApplication extends SpringBootServletInitializer implements Comm
 
 		log.info("Cantidad de productos de la categoría id=1: {}", productDAO.countProductsByCategory(1));
 		log.info("Set stock=true producto id que no existe, resultado={}", productDAO.setStock(true, 333));
-		
-		
+	
 
 	}
 
