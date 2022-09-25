@@ -35,7 +35,6 @@ public class AuthRestController extends BaseRestController {
     @Autowired
     private AuthenticationManager authManager;
 
-    @Autowired
 
     @PostMapping(value = Constants.URL_LOGIN, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<?> loginExternalOnlyToken(@RequestParam(value = "username") String username,
