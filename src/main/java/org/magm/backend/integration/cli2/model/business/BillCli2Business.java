@@ -1,15 +1,19 @@
 package org.magm.backend.integration.cli2.model.business;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.magm.backend.controllers.BaseRestController;
 import org.magm.backend.integration.cli2.model.BillCli2;
 import org.magm.backend.integration.cli2.model.BillCli2SlimView;
 import org.magm.backend.integration.cli2.model.persistence.IBillCli2Repository;
+import org.magm.backend.model.Audit;
+import org.magm.backend.model.business.AuditBusiness;
 import org.magm.backend.model.business.BusinessException;
 import org.magm.backend.model.business.FoundException;
 import org.magm.backend.model.business.NotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +25,9 @@ public class BillCli2Business implements IBillCli2Business {
 
 	@Autowired
 	private IBillCli2Repository billDAO;
+
+	@Autowired
+	private AuditBusiness auditBusiness;
 
 	@Override
 	public List<BillCli2> list() throws BusinessException {
@@ -49,6 +56,7 @@ public class BillCli2Business implements IBillCli2Business {
 
 	@Override
 	public BillCli2 add(BillCli2 bill) throws FoundException, BusinessException {
+
 		try {
 			load(bill.getId());
 			throw FoundException.builder().message("Se encontró la factura id=" + bill.getId()).build();
@@ -56,7 +64,23 @@ public class BillCli2Business implements IBillCli2Business {
 		}
 
 		try {
-			return billDAO.save(bill);
+
+			BillCli2 billCli2 = billDAO.save(bill);
+
+			Audit audit = new Audit();
+
+			String defaultFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
+			Date date = new Date();
+			DateTimeFormatter.ofPattern(defaultFormat);
+
+			audit.setAuditDate(date);
+			audit.setBill(bill);
+			audit.setType("ALTA");
+			audit.setUser(BaseRestController.getUserLoggedAudit());
+
+			auditBusiness.add(audit);
+
+			return billCli2;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw BusinessException.builder().ex(e).build();
@@ -67,7 +91,23 @@ public class BillCli2Business implements IBillCli2Business {
 	public BillCli2 update(BillCli2 bill) throws NotFoundException, BusinessException {
 		load(bill.getId());
 		try {
-			return billDAO.save(bill);
+
+			BillCli2 billCli2 = billDAO.save(bill);
+
+			Audit audit = new Audit();
+
+			String defaultFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
+			Date date = new Date();
+			DateTimeFormatter.ofPattern(defaultFormat);
+
+			audit.setAuditDate(date);
+			audit.setBill(bill);
+			audit.setType("MODIFICACION");
+			audit.setUser(BaseRestController.getUserLoggedAudit());
+
+			auditBusiness.add(audit);
+
+			return billCli2;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw BusinessException.builder().ex(e).build();
@@ -77,12 +117,13 @@ public class BillCli2Business implements IBillCli2Business {
 	@Override
 	public List<BillCli2> listNoAnulled() throws BusinessException {
 		List<BillCli2> listNoAnulled = list();
-		try{
+		try {
 			for (BillCli2 bill : listNoAnulled) {
 				if (bill.isAnnulled())
 					listNoAnulled.remove(bill);
 			}
-		}catch(Exception e){}
+		} catch (Exception e) {
+		}
 
 		return listNoAnulled;
 	}
@@ -90,13 +131,31 @@ public class BillCli2Business implements IBillCli2Business {
 	@Override
 	public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException {
 		BillCli2 bill = load(id);
+
+		Audit audit = new Audit();
+
+		String defaultFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
+		Date date = new Date();
+		DateTimeFormatter.ofPattern(defaultFormat);
+
+		audit.setAuditDate(date);
+		audit.setBill(bill);
+		audit.setType("BAJA");
+		audit.setUser(BaseRestController.getUserLoggedAudit());
+
+		try {
+			auditBusiness.add(audit);
+		} catch (FoundException e) {
+			e.printStackTrace();
+		}
+
 		bill.setAnnulled(true);
 		return billDAO.save(bill);
 	}
 
 	@Override
 	public List<Long> loadBillByProduct(long id) {
-		
+
 		return billDAO.getByBillByProduct(id);
 	}
 
@@ -104,4 +163,5 @@ public class BillCli2Business implements IBillCli2Business {
 	public BillCli2SlimView loadSlimView(long id) {
 		return billDAO.readById(id);
 	}
+
 }

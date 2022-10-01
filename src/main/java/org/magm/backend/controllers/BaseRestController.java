@@ -10,4 +10,10 @@ public class BaseRestController {
         User user = (User) auth.getPrincipal();
         return user;
     }
+
+    static public User getUserLoggedAudit() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+        return user;
+    }
 }
