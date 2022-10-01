@@ -64,22 +64,10 @@ public class BillCli2Business implements IBillCli2Business {
 		}
 
 		try {
-
 			BillCli2 billCli2 = billDAO.save(bill);
 
-			Audit audit = new Audit();
-
-			String defaultFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
-			Date date = new Date();
-			DateTimeFormatter.ofPattern(defaultFormat);
-
-			audit.setAuditDate(date);
-			audit.setBill(bill);
-			audit.setType("ALTA");
-			audit.setUser(BaseRestController.getUserLoggedAudit());
-
-			auditBusiness.add(audit);
-
+			generateAudit(bill, "ALTA");
+			
 			return billCli2;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -94,18 +82,7 @@ public class BillCli2Business implements IBillCli2Business {
 
 			BillCli2 billCli2 = billDAO.save(bill);
 
-			Audit audit = new Audit();
-
-			String defaultFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
-			Date date = new Date();
-			DateTimeFormatter.ofPattern(defaultFormat);
-
-			audit.setAuditDate(date);
-			audit.setBill(bill);
-			audit.setType("MODIFICACION");
-			audit.setUser(BaseRestController.getUserLoggedAudit());
-
-			auditBusiness.add(audit);
+			generateAudit(bill, "MODIFICACION");
 
 			return billCli2;
 		} catch (Exception e) {
@@ -132,19 +109,8 @@ public class BillCli2Business implements IBillCli2Business {
 	public BillCli2 anulledBill(long id) throws NotFoundException, BusinessException {
 		BillCli2 bill = load(id);
 
-		Audit audit = new Audit();
-
-		String defaultFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
-		Date date = new Date();
-		DateTimeFormatter.ofPattern(defaultFormat);
-
-		audit.setAuditDate(date);
-		audit.setBill(bill);
-		audit.setType("BAJA");
-		audit.setUser(BaseRestController.getUserLoggedAudit());
-
 		try {
-			auditBusiness.add(audit);
+			generateAudit(bill, "BAJA");
 		} catch (FoundException e) {
 			e.printStackTrace();
 		}
@@ -162,6 +128,22 @@ public class BillCli2Business implements IBillCli2Business {
 	@Override
 	public BillCli2SlimView loadSlimView(long id) {
 		return billDAO.readById(id);
+	}
+
+	private void generateAudit(BillCli2 bill, String type) throws FoundException, BusinessException {
+		Audit audit = new Audit();
+
+		String defaultFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
+		Date date = new Date();
+		DateTimeFormatter.ofPattern(defaultFormat);
+
+		audit.setAuditDate(date);
+		audit.setBill(bill);
+		audit.setType("BAJA");
+		audit.setUser(BaseRestController.getUserLoggedAudit());
+
+		auditBusiness.add(audit);
+
 	}
 
 }
