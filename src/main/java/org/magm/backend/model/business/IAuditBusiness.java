@@ -12,6 +12,6 @@ public interface IAuditBusiness {
   
   public Audit add(Audit audit) throws FoundException, BusinessException;
   
-  public List<Audit> list(String username) throws BusinessException;
+  public List<Audit> list() throws BusinessException;
 
 }

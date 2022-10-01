@@ -3,6 +3,7 @@ package org.magm.backend.model.business;
 import java.util.List;
 import java.util.Optional;
 
+import org.magm.backend.controllers.BaseRestController;
 import org.magm.backend.model.Audit;
 import org.magm.backend.model.persistence.AuditRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +53,9 @@ public class AuditBusiness implements IAuditBusiness {
   }
 
   @Override
-  public List<Audit> list(String username) throws BusinessException {
+  public List<Audit> list() throws BusinessException {
     try {
-      return auditDAO.userAudits(username);
+      return auditDAO.userAudits(BaseRestController.getUserLoggedAudit().getIdUser());
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw BusinessException.builder().ex(e).build();

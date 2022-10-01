@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuditRepository extends JpaRepository<Audit, Long>{
   
-  @Query(value = "SELECT * FROM audits WHERE audits.user = ? ",nativeQuery = true)
-  public List<Audit> userAudits(String username);
+  @Query(value = "SELECT * FROM audits as a INNER JOIN users as u WHERE u.id_user = ?",nativeQuery = true)
+  public List<Audit> userAudits(Long long1);
 }
