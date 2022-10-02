@@ -29,6 +29,9 @@ public class AuditRestController extends BaseRestController {
 
   @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> list() {
+    if(!BaseRestController.getUserLoggedAudit().isInRole("ROLE_VIEW"))
+      return new ResponseEntity<String>("No posee el usuario adecuado", HttpStatus.UNAUTHORIZED);
+
     try {
       StdSerializer<Audit> ser = null;
       ser = new AuditSlimJsonSerializer(Audit.class, false);
