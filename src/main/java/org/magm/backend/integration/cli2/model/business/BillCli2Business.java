@@ -139,7 +139,7 @@ public class BillCli2Business implements IBillCli2Business {
 
 		audit.setAuditDate(date);
 		audit.setBill(bill);
-		audit.setType("BAJA");
+		audit.setType(type);
 		audit.setUser(BaseRestController.getUserLoggedAudit());
 
 		auditBusiness.add(audit);
